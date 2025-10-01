@@ -21,6 +21,10 @@
                     <input type="number" id="current-hp"> / <span id="max-hp"></span>
                 </div>
                 <div class="stat-block">
+                    <span>Temp HP</span>
+                    <input type="number" id="temp-hp" value="0">
+                </div>
+                <div class="stat-block">
                     <span>AC</span>
                     <span id="armor-class"></span>
                 </div>
@@ -61,27 +65,62 @@
                     <p>🛡️ Advantage on Initiative & Perception checks.</p>
                 </div>
             </div>
-        </div>
-
-        <div class="card" id="attacks-card">
-            <h2>Attacks & Actions</h2>
-            <div class="attack-entry">
-                <strong>Longsword:</strong> 
-                <span id="attack-bonus"></span> to hit, 
-                <span id="damage-dice"></span> + <span id="damage-mod"></span> slashing
+            
+            <div class="card" id="status-card">
+                <h2>Status</h2>
+                <div class="death-saves">
+                    <span>Successes</span>
+                    <div>
+                        <input type="checkbox"> <input type="checkbox"> <input type="checkbox">
+                    </div>
+                </div>
+                <div class="death-saves">
+                    <span>Failures</span>
+                    <div>
+                        <input type="checkbox"> <input type="checkbox"> <input type="checkbox">
+                    </div>
+                </div>
+                <hr class="divider">
+                <h4>Conditions</h4>
+                <div class="conditions-grid">
+                    <div><input type="checkbox"> Blinded</div>
+                    <div><input type="checkbox"> Charmed</div>
+                    <div><input type="checkbox"> Deafened</div>
+                    <div><input type="checkbox"> Grappled</div>
+                    <div><input type="checkbox"> Prone</div>
+                    <div><input type="checkbox"> Restrained</div>
+                </div>
             </div>
-            <div class="attack-entry">
-                <strong>Light Crossbow:</strong> 
-                <span id="crossbow-attack-bonus"></span> to hit, 
-                1d8 + <span id="crossbow-damage-mod"></span> piercing
+            
+            <div class="card" id="feats-card">
+                <h2>Feat & Ability Reminders</h2>
+                <ul>
+                    <li><strong>Slasher:</strong> Once per turn, hitting with a slashing attack reduces target speed by 10 ft.</li>
+                    <li><strong>Reckless Attack:</strong> Gain advantage on your STR attacks for one turn, but attacks against you also have advantage.</li>
+                    <li><strong>Danger Sense:</strong> You have advantage on DEX saving throws against effects you can see.</li>
+                </ul>
             </div>
-            <div id="rage-damage-bonus" class="hidden">Rage is active!</div>
-            <hr>
-            <div id="beast-weapons" class="hidden">
-                <h4>Form of the Beast (While Raging)</h4>
-                <p><strong>Bite:</strong> <span class="beast-attack-bonus"></span> to hit, 1d8 + <span class="beast-damage-mod"></span> piercing. Once per turn, regain HP equal to your proficiency bonus.</p>
-                <p><strong>Claws:</strong> <span class="beast-attack-bonus"></span> to hit, 1d6 + <span class="beast-damage-mod"></span> slashing. After an attack, you can make one additional claw attack.</p>
-                <p><strong>Tail:</strong> <span class="beast-attack-bonus"></span> to hit, 1d8 + <span class="beast-damage-mod"></span> piercing (Reach). Use your reaction to add 1d8 to your AC.</p>
+            
+            <div class="card" id="attacks-card">
+                <h2>Attacks & Actions</h2>
+                <div class="attack-entry">
+                    <strong>Longsword:</strong> 
+                    <span id="attack-bonus"></span> to hit, 
+                    <span id="damage-dice"></span> + <span id="damage-mod"></span> slashing
+                </div>
+                <div class="attack-entry">
+                    <strong>Light Crossbow:</strong> 
+                    <span id="crossbow-attack-bonus"></span> to hit, 
+                    1d8 + <span id="crossbow-damage-mod"></span> piercing
+                </div>
+                <div id="rage-damage-bonus" class="hidden">Rage is active!</div>
+                <hr>
+                <div id="beast-weapons" class="hidden">
+                    <h4>Form of the Beast (While Raging)</h4>
+                    <p><strong>Bite:</strong> <span class="beast-attack-bonus"></span> to hit, 1d8 + <span class="beast-damage-mod"></span> piercing. Once per turn, regain HP equal to your proficiency bonus.</p>
+                    <p><strong>Claws:</strong> <span class="beast-attack-bonus"></span> to hit, 1d6 + <span class="beast-damage-mod"></span> slashing. After an attack, you can make one additional claw attack.</p>
+                    <p><strong>Tail:</strong> <span class="beast-attack-bonus"></span> to hit, 1d8 + <span class="beast-damage-mod"></span> piercing (Reach). Use your reaction to add 1d8 to your AC.</p>
+                </div>
             </div>
         </div>
 
