@@ -107,3 +107,13 @@ body.raging #rage-damage-bonus, body.raging #beast-weapons {
     text-align: center;
     margin-top: 10px;
 }
+#shield-reminder {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #e7f0fd;
+    border: 1px solid #4a69bd;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    color: #3b5998;
+}
