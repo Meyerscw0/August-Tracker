@@ -16,13 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
         fightingStyle: 'defense',            // +1 AC from Defense Style
         magicWeaponBonus: 1,                 // +1 Masterwork Longsword
         rageDamageBonus: 2,
+        rageAttackBonus: 2,                  // HOUSE RULE: +2 to hit while raging
     };
     // =================================================================
 
     // --- STATE VARIABLES ---
     let state = {
         isRaging: false,
-        isShieldEquipped: true, // Start with shield equipped as default
+        isShieldEquipped: true,
         currentHp: 0,
         currentRages: 0,
         currentEchoUses: 0,
@@ -53,44 +54,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const secondWindBtn = document.getElementById('second-wind-btn');
     const actionSurgeBtn = document.getElementById('action-surge-btn');
     const unleashBtn = document.getElementById('unleash-btn');
-    const shieldReminderEl = document.getElementById('shield-reminder'); // ADDED THIS LINE
+    const shieldReminderEl = document.getElementById('shield-reminder');
     
+    // Attack Spans
     const attackBonusEl = document.getElementById('attack-bonus');
     const damageDiceEl = document.getElementById('damage-dice');
     const damageModEl = document.getElementById('damage-mod');
-    const beastModEls = document.querySelectorAll('.beast-mod');
+    const crossbowAttackBonusEl = document.getElementById('crossbow-attack-bonus');
+    const crossbowDamageModEl = document.getElementById('crossbow-damage-mod');
+    const beastAttackBonusEls = document.querySelectorAll('.beast-attack-bonus');
+    const beastDamageModEls = document.querySelectorAll('.beast-damage-mod');
     
     const shortRestBtn = document.getElementById('short-rest-btn');
     const longRestBtn = document.getElementById('long-rest-btn');
 
     // --- CORE CALCULATION & DISPLAY FUNCTION ---
     function updateCharacterDisplay() {
-        // AC Calculation (Medium Armor)
-        let dexBonusForAc = Math.min(derived.dexMod, 2); // Medium armor max dex is +2
+        // AC Calculation
+        let dexBonusForAc = Math.min(derived.dexMod, 2);
         let currentAc = character.armor.base + dexBonusForAc + character.miscAcBonus;
-        if (character.fightingStyle === 'defense') {
-            currentAc += 1; // Defense fighting style bonus
-        }
-        if (state.isShieldEquipped) {
-            currentAc += 2; // Shield bonus
-        }
-        acEl.textContent = currentAc; // Total should be 20 with shield, 18 without
+        if (character.fightingStyle === 'defense') { currentAc += 1; }
+        if (state.isShieldEquipped) { currentAc += 2; }
+        acEl.textContent = currentAc;
 
-        // Attack Calculation
-        const attackBonus = derived.strMod + derived.profBonus + character.magicWeaponBonus;
-        attackBonusEl.textContent = `+${attackBonus}`;
-
-        // Damage Calculation
-        let damageModifier = derived.strMod + character.magicWeaponBonus;
+        // Longsword Calculation
+        let longswordAttackBonus = derived.strMod + derived.profBonus + character.magicWeaponBonus;
+        let longswordDamageMod = derived.strMod + character.magicWeaponBonus;
         if (state.isRaging) {
-            damageModifier += character.rageDamageBonus;
+            longswordAttackBonus += character.rageAttackBonus;
+            longswordDamageMod += character.rageDamageBonus;
         }
-        damageModEl.textContent = damageModifier >= 0 ? `+${damageModifier}` : damageModifier;
-        beastModEls.forEach(el => el.textContent = damageModifier >= 0 ? `+${damageModifier}` : damageModifier);
-        
-        // Weapon Dice (Versatile)
+        attackBonusEl.textContent = `+${longswordAttackBonus}`;
+        damageModEl.textContent = longswordDamageMod >= 0 ? `+${longswordDamageMod}` : longswordDamageMod;
         damageDiceEl.textContent = state.isShieldEquipped ? '1d8' : '1d10';
 
+        // Crossbow Calculation (Unaffected by Rage/Stance)
+        const crossbowAttackBonus = derived.dexMod + derived.profBonus;
+        const crossbowDamageMod = derived.dexMod;
+        crossbowAttackBonusEl.textContent = `+${crossbowAttackBonus}`;
+        crossbowDamageModEl.textContent = crossbowDamageMod >= 0 ? `+${crossbowDamageMod}` : crossbowDamageMod;
+
+        // Beast Weapons Calculation
+        const beastAttackBonus = derived.strMod + derived.profBonus; // Base is +7
+        let beastDamageMod = derived.strMod; // Base is +4
+        if (state.isRaging) {
+            beastDamageMod += character.rageDamageBonus; // Raging becomes +6
+        }
+        beastAttackBonusEls.forEach(el => el.textContent = `+${beastAttackBonus}`);
+        beastDamageModEls.forEach(el => el.textContent = beastDamageMod >= 0 ? `+${beastDamageMod}` : beastDamageMod);
+        
         // Update UI states
         body.classList.toggle('raging', state.isRaging);
         shieldBtn.classList.toggle('active', state.isShieldEquipped);
@@ -98,8 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
         rageBtn.textContent = state.isRaging ? 'END RAGE' : 'RAGE';
         rageUsesEl.textContent = state.currentRages;
         echoUsesEl.textContent = state.currentEchoUses;
-        
-        // ADDED THIS LINE to toggle the reminder
         shieldReminderEl.classList.toggle('hidden', !state.isShieldEquipped);
     }
     
@@ -168,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset state
         state.currentHp = character.maxHp;
         state.currentRages = 3;
-        state.currentEchoUses = derived.conMod; // Based on CON 17 (+3)
+        state.currentEchoUses = derived.conMod;
         state.isRaging = false;
 
         // Reset short rest abilities
