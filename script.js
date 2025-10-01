@@ -4,18 +4,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
     const character = {
         level: 6,
-        maxHp: 72, // [cite: 25]
+        maxHp: 72,
         abilityScores: {
-            str: 19, // [cite: 14]
-            dex: 14, // [cite: 27]
-            con: 17, // [cite: 40]
+            str: 19,
+            dex: 14,
+            con: 17,
         },
         // Equipment & Features affecting stats
-        armor: { base: 14, type: 'medium' }, // Breastplate 
-        miscAcBonus: 1,                      // Cloak of Protection 
-        fightingStyle: 'defense',            // +1 AC from Defense Style 
-        magicWeaponBonus: 1,                 // +1 Masterwork Longsword 
-        rageDamageBonus: 2,                  // [cite: 148]
+        armor: { base: 14, type: 'medium' }, // Breastplate
+        miscAcBonus: 1,                      // Cloak of Protection
+        fightingStyle: 'defense',            // +1 AC from Defense Style
+        magicWeaponBonus: 1,                 // +1 Masterwork Longsword
+        rageDamageBonus: 2,
     };
     // =================================================================
 
@@ -52,6 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const shieldBtn = document.getElementById('shield-btn');
     const secondWindBtn = document.getElementById('second-wind-btn');
     const actionSurgeBtn = document.getElementById('action-surge-btn');
+    const unleashBtn = document.getElementById('unleash-btn');
+    const shieldReminderEl = document.getElementById('shield-reminder'); // ADDED THIS LINE
     
     const attackBonusEl = document.getElementById('attack-bonus');
     const damageDiceEl = document.getElementById('damage-dice');
@@ -67,10 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let dexBonusForAc = Math.min(derived.dexMod, 2); // Medium armor max dex is +2
         let currentAc = character.armor.base + dexBonusForAc + character.miscAcBonus;
         if (character.fightingStyle === 'defense') {
-            currentAc += 1; // Defense fighting style bonus 
+            currentAc += 1; // Defense fighting style bonus
         }
         if (state.isShieldEquipped) {
-            currentAc += 2; // Shield bonus 
+            currentAc += 2; // Shield bonus
         }
         acEl.textContent = currentAc; // Total should be 20 with shield, 18 without
 
@@ -87,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         beastModEls.forEach(el => el.textContent = damageModifier >= 0 ? `+${damageModifier}` : damageModifier);
         
         // Weapon Dice (Versatile)
-        damageDiceEl.textContent = state.isShieldEquipped ? '1d8' : '1d10'; // [cite: 77]
+        damageDiceEl.textContent = state.isShieldEquipped ? '1d8' : '1d10';
 
         // Update UI states
         body.classList.toggle('raging', state.isRaging);
@@ -96,6 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
         rageBtn.textContent = state.isRaging ? 'END RAGE' : 'RAGE';
         rageUsesEl.textContent = state.currentRages;
         echoUsesEl.textContent = state.currentEchoUses;
+        
+        // ADDED THIS LINE to toggle the reminder
+        shieldReminderEl.classList.toggle('hidden', !state.isShieldEquipped);
     }
     
     // --- EVENT LISTENERS ---
@@ -114,6 +119,15 @@ document.addEventListener('DOMContentLoaded', () => {
     shieldBtn.addEventListener('click', () => {
         state.isShieldEquipped = !state.isShieldEquipped;
         updateCharacterDisplay();
+    });
+    
+    unleashBtn.addEventListener('click', () => {
+        if (state.currentEchoUses > 0) {
+            state.currentEchoUses--;
+            updateCharacterDisplay();
+        } else {
+            alert("No uses of Unleash Incarnation left!");
+        }
     });
 
     secondWindBtn.addEventListener('click', () => {
@@ -153,8 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Reset state
         state.currentHp = character.maxHp;
-        state.currentRages = 3; // [cite: 148]
-        state.currentEchoUses = derived.conMod; // Based on CON 17 (+3) [cite: 40, 151]
+        state.currentRages = 3;
+        state.currentEchoUses = derived.conMod; // Based on CON 17 (+3)
         state.isRaging = false;
 
         // Reset short rest abilities
