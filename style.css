@@ -1,155 +1,373 @@
-body {
-    font-family: sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-.container {
-    width: 100%;
-    max-width: 900px;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-header {
-    text-align: center;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
-.main-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
-.card {
-    background-color: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-}
-.stat-block {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.2em;
-    margin-bottom: 10px;
-}
-.stat-block span:first-child {
-    font-weight: bold;
-}
-#current-hp {
-    width: 60px;
-    text-align: center;
-    font-size: 1em;
-}
-.resource {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-}
-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-#rage-btn {
-    background-color: #b33939;
-    color: white;
-}
-.cooldown.used {
-    background-color: #888;
-    color: #ccc;
-    cursor: not-allowed;
-}
-.controls {
-    text-align: center;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 2px solid #ddd;
-}
-.controls button {
-    background-color: #3b5998;
-    color: white;
-    margin: 0 10px;
-}
-.hidden {
-    display: none;
-}
-body.raging #rage-btn {
-    background-color: #6D214F;
-}
-body.raging #attacks-card {
-    border: 2px solid #b33939;
-}
-body.raging #rage-damage-bonus, body.raging #beast-weapons {
-    display: block;
-}
-#shield-btn.active {
-    background-color: #4a69bd;
-    color: white;
-}
-.attack-entry {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-}
-#rage-damage-bonus {
-    color: #b33939;
-    font-weight: bold;
-    text-align: center;
-    margin-top: 10px;
+:root {
+    --bg-dark: #121214;
+    --card-bg: #1e1e24;
+    --card-border: #2d2d34;
+    --accent-gold: #d4af37;
+    --accent-red: #c0392b;
+    --accent-blue: #2980b9;
+    --text-main: #ecf0f1;
+    --text-muted: #95a5a6;
+    --success: #27ae60;
 }
 
-/* NEW ADDITIONS */
-#shield-reminder {
-    margin-top: 15px;
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+h1, h2, h4 {
+    font-family: 'Cinzel', serif;
+    margin: 0 0 15px 0;
+    color: var(--accent-gold);
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+}
+
+/* --- Header --- */
+header {
+    text-align: center;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.level-badge {
+    background: var(--accent-gold);
+    color: #000;
+    font-size: 0.5em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    vertical-align: middle;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* --- Grid Layout --- */
+.main-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    align-items: start;
+}
+
+@media (min-width: 1000px) {
+    .main-grid {
+        grid-template-columns: 1fr 1.2fr 1fr; /* Center column slightly wider */
+    }
+}
+
+/* --- Card Styling --- */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* --- Inputs & Forms --- */
+input[type="number"] {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    padding: 5px;
+    border-radius: 4px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+}
+
+/* --- Stats Section --- */
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.stat-block {
+    text-align: center;
+    background: rgba(0,0,0,0.2);
     padding: 10px;
-    background-color: #e7f0fd;
-    border: 1px solid #4a69bd;
-    border-radius: 5px;
+    border-radius: 6px;
+    flex: 1;
+    margin: 0 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.hp-inputs {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.2em;
+}
+
+#current-hp {
+    width: 70px;
+    font-size: 1.2em;
+    color: var(--success);
+}
+
+.big-number {
+    font-size: 1.8em;
+    font-weight: bold;
+    font-family: 'Cinzel', serif;
+}
+
+/* --- Buttons --- */
+button {
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.btn-main {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1em;
+    background-color: var(--accent-red);
+    color: white;
+    box-shadow: 0 0 10px rgba(192, 57, 43, 0.3);
+}
+
+.btn-main:hover {
+    background-color: #e74c3c;
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(192, 57, 43, 0.6);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 10px;
+    background-color: #555;
+    color: white;
+}
+
+.btn-small {
+    padding: 5px 10px;
+    font-size: 0.8em;
+}
+
+.btn-toggle {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--card-border);
+    color: var(--text-muted);
+    border: 1px solid var(--text-muted);
+}
+
+.rest-btn {
+    background: transparent;
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+    padding: 8px 16px;
+    margin: 0 5px;
+}
+
+.rest-btn:hover {
+    background: var(--accent-gold);
+    color: #000;
+}
+
+/* --- Specific ID States (Logic Connected) --- */
+/* Rage State */
+body.raging .rage-btn {
+    background-color: #6D214F;
+    animation: pulse 2s infinite;
+    content: "END RAGE";
+}
+body.raging #attacks-card {
+    border: 1px solid var(--accent-red);
+    box-shadow: 0 0 10px rgba(192, 57, 43, 0.2);
+}
+body.raging #current-hp {
+    color: var(--accent-red);
+}
+
+/* Shield State */
+#shield-btn.active {
+    background-color: var(--accent-blue);
+    color: white;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 10px rgba(41, 128, 185, 0.4);
+}
+
+/* Cooldowns */
+.cooldown.used {
+    background-color: #2c3e50;
+    color: #555;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* --- Resources --- */
+.resource-highlight {
+    background: rgba(0,0,0,0.2);
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.resource-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.resource-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.resource-small {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: center;
+}
+
+/* --- Attacks --- */
+.attack-entry {
+    background: rgba(255,255,255,0.05);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border-left: 3px solid var(--accent-gold);
+}
+
+.atk-header {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.atk-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9em;
+}
+
+.hit-badge { color: var(--accent-gold); }
+.dmg-badge { color: var(--text-main); }
+
+#rage-damage-bonus {
+    background: rgba(192, 57, 43, 0.2);
+    color: #ff7675;
+    padding: 10px;
     text-align: center;
     font-weight: bold;
-    color: #3b5998;
+    border: 1px solid var(--accent-red);
+    border-radius: 4px;
+    margin-top: 10px;
+    animation: pulse 2s infinite;
 }
-#temp-hp {
-    width: 60px;
-    text-align: center;
-    font-size: 1em;
+
+.beast-panel {
+    margin-top: 15px;
+    border-top: 1px solid var(--card-border);
+    padding-top: 15px;
 }
-.death-saves {
+
+.beast-entry {
+    font-size: 0.9em;
+    margin-bottom: 8px;
+    color: #dcdde1;
+}
+
+/* --- Status --- */
+.death-saves-container {
+    background: rgba(0,0,0,0.2);
+    padding: 10px;
+    border-radius: 4px;
+}
+.death-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
-.death-saves span {
-    font-weight: bold;
+
+/* Custom Checkboxes for Death Saves */
+input[type="checkbox"] {
+    accent-color: var(--accent-gold);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
 }
-.divider {
-    border: none;
-    border-top: 1px solid #ddd;
-    margin: 15px 0;
-}
+.save-success { accent-color: var(--success); }
+.save-fail { accent-color: var(--accent-red); }
+
 .conditions-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
+    font-size: 0.9em;
 }
-#feats-card ul {
-    margin: 0;
-    padding-left: 20px;
+
+/* --- Feats --- */
+.feat-list {
+    padding-left: 0;
+    list-style: none;
 }
-#feats-card li {
-    margin-bottom: 10px;
+.feat-list li {
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
 }
-#attacks-card {
-    grid-column: 1 / -1;
+.feat-list p {
+    margin: 5px 0 0 0;
+    font-size: 0.85em;
+    color: var(--text-muted);
+}
+
+/* --- Helpers --- */
+.hidden { display: none !important; }
+.controls {
+    margin-top: 20px;
+    text-align: center;
+}
+.info-box {
+    margin-top: 10px;
+    background: rgba(41, 128, 185, 0.2);
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
 }
