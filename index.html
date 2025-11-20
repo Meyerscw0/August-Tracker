@@ -4,129 +4,190 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>August's Character Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="bg-overlay"></div>
     <div class="container">
         <header>
-            <h1>August - Level 6</h1>
-            <p>Echo Knight Fighter 3 / Path of the Beast Barbarian 3</p>
+            <div class="header-content">
+                <h1>August <span class="level-badge">LVL 6</span></h1>
+                <p class="subtitle">Echo Knight Fighter 3 / Path of the Beast Barbarian 3</p>
+            </div>
         </header>
 
         <div class="main-grid">
-            <div class="card" id="stats-card">
-                <h2>Core Stats</h2>
-                <div class="stat-block">
-                    <span>HP</span>
-                    <input type="number" id="current-hp"> / <span id="max-hp"></span>
-                </div>
-                <div class="stat-block">
-                    <span>Temp HP</span>
-                    <input type="number" id="temp-hp" value="0">
-                </div>
-                <div class="stat-block">
-                    <span>AC</span>
-                    <span id="armor-class"></span>
-                </div>
-                 <div class="stat-block">
-                    <span>Proficiency Bonus</span>
-                    +<span id="prof-bonus"></span>
-                </div>
-                <div class="hit-dice">
-                    <p>Hit Dice: 3d12 / 3d10</p>
-                </div>
-            </div>
-
-            <div class="card" id="resources-card">
-                <h2>Resources</h2>
-                <div class="resource">
-                    <span>Rages: <span id="rage-uses"></span> / <span id="max-rages"></span></span>
-                    <button id="rage-btn">RAGE</button>
-                </div>
-                <div class="resource">
-                    <span>Unleash Incarnation: <span id="echo-uses"></span> / <span id="max-echo-uses"></span></span>
-                    <button class="cooldown" id="unleash-btn">USE</button>
-                </div>
-                <div class="resource">
-                    <span>Second Wind</span>
-                    <button class="cooldown" id="second-wind-btn">USE</button>
-                </div>
-                 <div class="resource">
-                    <span>Action Surge</span>
-                    <button class="cooldown" id="action-surge-btn">USE</button>
-                </div>
-            </div>
-
-            <div class="card" id="stance-card">
-                <h2>Combat Stance</h2>
-                <p>Switch between one-handed (with shield) and two-handed (versatile) fighting styles.</p>
-                <button id="shield-btn">Equip Shield</button>
-                <div id="shield-reminder" class="hidden">
-                    <p>🛡️ Advantage on Initiative & Perception checks.</p>
-                </div>
-            </div>
-            
-            <div class="card" id="status-card">
-                <h2>Status</h2>
-                <div class="death-saves">
-                    <span>Successes</span>
-                    <div>
-                        <input type="checkbox"> <input type="checkbox"> <input type="checkbox">
+            <div class="column-left">
+                <div class="card" id="stats-card">
+                    <h2><i class="icon-shield"></i> Vitals</h2>
+                    <div class="stat-row main-stats">
+                        <div class="stat-block hp-block">
+                            <span class="label">HP</span>
+                            <div class="hp-inputs">
+                                <input type="number" id="current-hp" placeholder="0">
+                                <span class="divider">/</span>
+                                <span id="max-hp"></span>
+                            </div>
+                        </div>
+                        <div class="stat-block ac-block">
+                            <span class="label">AC</span>
+                            <span id="armor-class" class="big-number"></span>
+                        </div>
+                    </div>
+                    <div class="stat-row secondary-stats">
+                        <div class="stat-block">
+                            <span class="label">Temp HP</span>
+                            <input type="number" id="temp-hp" value="0">
+                        </div>
+                        <div class="stat-block">
+                            <span class="label">Prof.</span>
+                            <span class="bonus-text">+<span id="prof-bonus"></span></span>
+                        </div>
+                    </div>
+                    <div class="hit-dice">
+                        <small>Hit Dice: 3d12 / 3d10</small>
                     </div>
                 </div>
-                <div class="death-saves">
-                    <span>Failures</span>
-                    <div>
-                        <input type="checkbox"> <input type="checkbox"> <input type="checkbox">
+
+                <div class="card" id="status-card">
+                    <h2>Status & Saves</h2>
+                    <div class="death-saves-container">
+                        <div class="death-row">
+                            <span>Success</span>
+                            <div class="checks">
+                                <input type="checkbox" class="save-success"> 
+                                <input type="checkbox" class="save-success"> 
+                                <input type="checkbox" class="save-success">
+                            </div>
+                        </div>
+                        <div class="death-row">
+                            <span>Failure</span>
+                            <div class="checks">
+                                <input type="checkbox" class="save-fail"> 
+                                <input type="checkbox" class="save-fail"> 
+                                <input type="checkbox" class="save-fail">
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="divider">
+                    <h4>Conditions</h4>
+                    <div class="conditions-grid">
+                        <label><input type="checkbox"> Blinded</label>
+                        <label><input type="checkbox"> Charmed</label>
+                        <label><input type="checkbox"> Deafened</label>
+                        <label><input type="checkbox"> Grappled</label>
+                        <label><input type="checkbox"> Prone</label>
+                        <label><input type="checkbox"> Restrained</label>
                     </div>
                 </div>
-                <hr class="divider">
-                <h4>Conditions</h4>
-                <div class="conditions-grid">
-                    <div><input type="checkbox"> Blinded</div>
-                    <div><input type="checkbox"> Charmed</div>
-                    <div><input type="checkbox"> Deafened</div>
-                    <div><input type="checkbox"> Grappled</div>
-                    <div><input type="checkbox"> Prone</div>
-                    <div><input type="checkbox"> Restrained</div>
-                </div>
             </div>
-            
-            <div class="card" id="feats-card">
-                <h2>Feat & Ability Reminders</h2>
-                <ul>
-                    <li><strong>Slasher:</strong> Once per turn, hitting with a slashing attack reduces target speed by 10 ft.</li>
-                    <li><strong>Reckless Attack:</strong> Gain advantage on your STR attacks for one turn, but attacks against you also have advantage.</li>
-                    <li><strong>Danger Sense:</strong> You have advantage on DEX saving throws against effects you can see.</li>
-                </ul>
-            </div>
-            
-            <div class="card" id="attacks-card">
-                <h2>Attacks & Actions</h2>
-                <div class="attack-entry">
-                    <strong>Longsword:</strong> 
-                    <span id="attack-bonus"></span> to hit, 
-                    <span id="damage-dice"></span> + <span id="damage-mod"></span> slashing
-                </div>
-                <div class="attack-entry">
-                    <strong>Light Crossbow:</strong> 
-                    <span id="crossbow-attack-bonus"></span> to hit, 
-                    1d8 + <span id="crossbow-damage-mod"></span> piercing
-                </div>
-                <div id="rage-damage-bonus" class="hidden">Rage is active!</div>
-                <hr>
-                <div id="beast-weapons" class="hidden">
-                    <h4>Form of the Beast (While Raging)</h4>
-                    <p><strong>Bite:</strong> <span class="beast-attack-bonus"></span> to hit, 1d8 + <span class="beast-damage-mod"></span> piercing. Once per turn, regain HP equal to your proficiency bonus.</p>
-                    <p><strong>Claws:</strong> <span class="beast-attack-bonus"></span> to hit, 1d6 + <span class="beast-damage-mod"></span> slashing. After an attack, you can make one additional claw attack.</p>
-                    <p><strong>Tail:</strong> <span class="beast-attack-bonus"></span> to hit, 1d8 + <span class="beast-damage-mod"></span> piercing (Reach). Use your reaction to add 1d8 to your AC.</p>
-                </div>
-            </div>
-        </div>
 
-        <div class="controls">
-            <button id="short-rest-btn">Short Rest</button>
-            <button id="long-rest-btn">Long Rest</button>
+            <div class="column-center">
+                <div class="card" id="resources-card">
+                    <h2>Combat Resources</h2>
+                    
+                    <div class="resource-highlight">
+                        <div class="resource-header">
+                            <span>Rages</span>
+                            <span class="counter"><span id="rage-uses"></span> / <span id="max-rages"></span></span>
+                        </div>
+                        <button id="rage-btn" class="btn-main rage-btn">ENTER RAGE</button>
+                    </div>
+
+                    <div class="resource-highlight">
+                        <div class="resource-header">
+                            <span>Unleash Incarnation</span>
+                            <span class="counter"><span id="echo-uses"></span> / <span id="max-echo-uses"></span></span>
+                        </div>
+                        <button class="cooldown btn-secondary" id="unleash-btn">UNLEASH</button>
+                    </div>
+
+                    <div class="resource-grid">
+                        <div class="resource-small">
+                            <span>Second Wind</span>
+                            <button class="cooldown btn-small" id="second-wind-btn">USE</button>
+                        </div>
+                        <div class="resource-small">
+                            <span>Action Surge</span>
+                            <button class="cooldown btn-small" id="action-surge-btn">USE</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="attacks-card">
+                    <h2>Attacks & Damage</h2>
+                    <div class="attack-list">
+                        <div class="attack-entry">
+                            <div class="atk-header">Longsword</div> 
+                            <div class="atk-details">
+                                <span class="hit-badge">+<span id="attack-bonus"></span> HIT</span>
+                                <span class="dmg-badge"><span id="damage-dice"></span> + <span id="damage-mod"></span> slash</span>
+                            </div>
+                        </div>
+                        <div class="attack-entry">
+                            <div class="atk-header">Light Crossbow</div>
+                            <div class="atk-details">
+                                <span class="hit-badge">+<span id="crossbow-attack-bonus"></span> HIT</span>
+                                <span class="dmg-badge">1d8 + <span id="crossbow-damage-mod"></span> pierce</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="rage-damage-bonus" class="hidden alert-box">
+                        🔥 RAGE ACTIVE (+2 Dmg) 🔥
+                    </div>
+
+                    <div id="beast-weapons" class="hidden beast-panel">
+                        <h4><span class="icon-claw"></span> Form of the Beast</h4>
+                        <div class="beast-entry">
+                            <strong>Bite:</strong> +<span class="beast-attack-bonus"></span> Hit, 1d8 + <span class="beast-damage-mod"></span> Pierce. (Heal on hit)
+                        </div>
+                        <div class="beast-entry">
+                            <strong>Claws:</strong> +<span class="beast-attack-bonus"></span> Hit, 1d6 + <span class="beast-damage-mod"></span> Slash. (Double attack)
+                        </div>
+                        <div class="beast-entry">
+                            <strong>Tail:</strong> +<span class="beast-attack-bonus"></span> Hit, 1d8 + <span class="beast-damage-mod"></span> Pierce. (Reach & +AC Reaction)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column-right">
+                <div class="card" id="stance-card">
+                    <h2>Stance</h2>
+                    <button id="shield-btn" class="btn-toggle">Equip Shield</button>
+                    <div id="shield-reminder" class="hidden info-box">
+                        <p>🛡️ <strong>Shield Up</strong></p>
+                        <small>Adv. on Dex saves & Initiative</small>
+                    </div>
+                </div>
+                
+                <div class="card" id="feats-card">
+                    <h2>Passives</h2>
+                    <ul class="feat-list">
+                        <li>
+                            <strong>Slasher</strong>
+                            <p>Slash hit = -10ft speed.</p>
+                        </li>
+                        <li>
+                            <strong>Reckless</strong>
+                            <p>Advantage on STR attacks (Enemies get Adv against you).</p>
+                        </li>
+                        <li>
+                            <strong>Danger Sense</strong>
+                            <p>Advantage on DEX saves vs visible effects.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                 <div class="controls">
+                    <button id="short-rest-btn" class="rest-btn">Short Rest</button>
+                    <button id="long-rest-btn" class="rest-btn">Long Rest</button>
+                </div>
+            </div>
         </div>
     </div>
 
