@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+/*document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
     // --- AUGUST'S STATS (FROM CHARACTER SHEET) ---
     // =================================================================
@@ -200,4 +200,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- RUN INITIALIZATION ON PAGE LOAD ---
     initialize();
-});
+});*/
