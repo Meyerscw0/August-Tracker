@@ -7,10 +7,640 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+:root {
+    --bg-dark: #0a0a0f;
+    --bg-gradient: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+    --card-bg: rgba(30, 30, 36, 0.8);
+    --card-border: #2d2d34;
+    --accent-gold: #ffd700;
+    --accent-red: #ff4757;
+    --accent-blue: #3498db;
+    --accent-purple: #9b59b6;
+    --text-main: #ecf0f1;
+    --text-muted: #95a5a6;
+    --success: #2ecc71;
+    --glow-gold: rgba(255, 215, 0, 0.3);
+    --glow-red: rgba(255, 71, 87, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+h1, h2, h4 {
+    font-family: 'Cinzel', serif;
+    margin: 0 0 15px 0;
+    color: var(--accent-gold);
+    text-shadow: 0 0 10px var(--glow-gold);
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+    z-index: 1;
+}
+
+header {
+    text-align: center;
+    border-bottom: 2px solid var(--accent-gold);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    text-shadow: 0 0 20px var(--glow-gold);
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% { text-shadow: 0 0 20px var(--glow-gold); }
+    50% { text-shadow: 0 0 30px var(--glow-gold), 0 0 40px var(--glow-gold); }
+}
+
+.level-badge {
+    background: linear-gradient(135deg, var(--accent-gold) 0%, #ffed4e 100%);
+    color: #000;
+    font-size: 0.5em;
+    padding: 4px 10px;
+    border-radius: 6px;
+    vertical-align: middle;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    box-shadow: 0 0 15px var(--glow-gold);
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 1.1em;
+}
+
+.main-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    align-items: start;
+}
+
+@media (min-width: 1000px) {
+    .main-grid {
+        grid-template-columns: 1fr 1.2fr 1fr;
+    }
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+}
+
+input[type="number"] {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    font-size: 1em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--accent-gold);
+    box-shadow: 0 0 10px var(--glow-gold);
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.stat-block {
+    text-align: center;
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.label {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.hp-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2em;
+}
+
+#current-hp {
+    width: 80px;
+    font-size: 1.3em;
+    color: var(--success);
+    font-weight: bold;
+}
+
+.big-number {
+    font-size: 2em;
+    font-weight: bold;
+    font-family: 'Cinzel', serif;
+    color: var(--accent-gold);
+    text-shadow: 0 0 10px var(--glow-gold);
+}
+
+button {
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button:active::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-main {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.2em;
+    background: linear-gradient(135deg, #ff4757 0%, #c0392b 100%);
+    color: white;
+    box-shadow: 0 4px 15px var(--glow-red);
+    letter-spacing: 1px;
+}
+
+.btn-main:hover {
+    background: linear-gradient(135deg, #ff6b7a 0%, #e74c3c 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px var(--glow-red);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #555 0%, #333 100%);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #666 0%, #444 100%);
+}
+
+.btn-small {
+    padding: 8px 12px;
+    font-size: 0.85em;
+    background: linear-gradient(135deg, #555 0%, #333 100%);
+    color: white;
+}
+
+.btn-small:hover {
+    background: linear-gradient(135deg, #666 0%, #444 100%);
+}
+
+.btn-toggle {
+    width: 100%;
+    padding: 14px;
+    background: rgba(45, 45, 52, 0.5);
+    color: var(--text-muted);
+    border: 2px solid var(--text-muted);
+}
+
+.btn-toggle:hover {
+    background: rgba(45, 45, 52, 0.8);
+    border-color: var(--accent-blue);
+}
+
+.rest-btn {
+    background: transparent;
+    border: 2px solid var(--accent-gold);
+    color: var(--accent-gold);
+    padding: 10px 20px;
+    margin: 0 5px;
+    box-shadow: 0 0 10px var(--glow-gold);
+}
+
+.rest-btn:hover {
+    background: var(--accent-gold);
+    color: #000;
+    box-shadow: 0 0 20px var(--glow-gold);
+}
+
+body.raging .rage-btn {
+    background: linear-gradient(135deg, #6D214F 0%, #4a0e35 100%);
+    animation: ragePulse 1.5s infinite;
+    box-shadow: 0 0 30px rgba(109, 33, 79, 0.8);
+}
+
+@keyframes ragePulse {
+    0%, 100% { 
+        box-shadow: 0 0 30px rgba(109, 33, 79, 0.8);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 50px rgba(109, 33, 79, 1);
+        transform: scale(1.02);
+    }
+}
+
+body.raging #attacks-card {
+    border: 2px solid var(--accent-red);
+    box-shadow: 0 0 30px var(--glow-red);
+    animation: cardPulse 2s infinite;
+}
+
+@keyframes cardPulse {
+    0%, 100% { box-shadow: 0 0 30px var(--glow-red); }
+    50% { box-shadow: 0 0 40px var(--glow-red), 0 0 60px var(--glow-red); }
+}
+
+body.raging #current-hp {
+    color: var(--accent-red);
+    text-shadow: 0 0 10px var(--glow-red);
+}
+
+#shield-btn.active {
+    background: linear-gradient(135deg, var(--accent-blue) 0%, #2980b9 100%);
+    color: white;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 20px rgba(41, 128, 185, 0.6);
+}
+
+.cooldown.used {
+    background: #1a1a1a;
+    color: #444;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.cooldown.used::after {
+    content: ' ✓';
+}
+
+.resource-highlight {
+    background: rgba(0,0,0,0.3);
+    padding: 18px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.resource-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.resource-header span:first-child {
+    font-size: 1.1em;
+    color: var(--accent-gold);
+}
+
+.counter {
+    font-size: 1.2em;
+    font-family: 'Cinzel', serif;
+    color: var(--text-main);
+    padding: 4px 12px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+}
+
+.resource-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.resource-small {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+}
+
+.resource-small span {
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
+
+.attack-entry {
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    padding: 14px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent-gold);
+    transition: all 0.2s;
+}
+
+.attack-entry:hover {
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+    border-left-color: var(--accent-gold);
+    box-shadow: 0 0 15px var(--glow-gold);
+}
+
+.atk-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+    color: var(--text-main);
+}
+
+.atk-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.95em;
+}
+
+.hit-badge { 
+    color: var(--accent-gold);
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--glow-gold);
+}
+
+.dmg-badge { 
+    color: var(--text-main);
+    font-weight: bold;
+}
+
+#rage-damage-bonus {
+    background: linear-gradient(135deg, rgba(192, 57, 43, 0.3) 0%, rgba(192, 57, 43, 0.1) 100%);
+    color: #ff7675;
+    padding: 14px;
+    text-align: center;
+    font-weight: bold;
+    border: 2px solid var(--accent-red);
+    border-radius: 8px;
+    margin-top: 15px;
+    animation: ragePulse 1.5s infinite;
+    box-shadow: 0 0 20px var(--glow-red);
+}
+
+.beast-panel {
+    margin-top: 20px;
+    border-top: 2px solid var(--accent-purple);
+    padding-top: 20px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.beast-panel h4 {
+    color: var(--accent-purple);
+    text-shadow: 0 0 10px rgba(155, 89, 182, 0.5);
+}
+
+.beast-entry {
+    font-size: 0.95em;
+    margin-bottom: 10px;
+    color: #dcdde1;
+    padding: 8px;
+    background: rgba(155, 89, 182, 0.1);
+    border-radius: 6px;
+    border-left: 3px solid var(--accent-purple);
+}
+
+.beast-entry strong {
+    color: var(--accent-purple);
+}
+
+.death-saves-container {
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.death-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.death-row span {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+.checks {
+    display: flex;
+    gap: 8px;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+input[type="checkbox"]:hover {
+    transform: scale(1.1);
+}
+
+.save-success { accent-color: var(--success); }
+.save-fail { accent-color: var(--accent-red); }
+
+.conditions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    font-size: 0.9em;
+}
+
+.conditions-grid label {
+    padding: 8px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.conditions-grid label:hover {
+    background: rgba(0,0,0,0.4);
+}
+
+.conditions-grid input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+}
+
+.feat-list {
+    padding-left: 0;
+    list-style: none;
+}
+
+.feat-list li {
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px;
+    transition: all 0.2s;
+}
+
+.feat-list li:hover {
+    border-bottom-color: var(--accent-gold);
+    padding-left: 5px;
+}
+
+.feat-list strong {
+    color: var(--accent-gold);
+    font-size: 1.05em;
+}
+
+.feat-list p {
+    margin: 8px 0 0 0;
+    font-size: 0.9em;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.hidden { 
+    display: none !important; 
+}
+
+.controls {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.info-box {
+    margin-top: 12px;
+    background: linear-gradient(135deg, rgba(41, 128, 185, 0.3) 0%, rgba(41, 128, 185, 0.1) 100%);
+    padding: 14px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.95em;
+    border: 1px solid rgba(41, 128, 185, 0.5);
+}
+
+.info-box p {
+    margin: 0 0 5px 0;
+}
+
+.hit-dice {
+    text-align: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+    font-size: 0.9em;
+}
+
+hr.divider {
+    border: none;
+    border-top: 1px solid var(--card-border);
+    margin: 20px 0;
+}
+
+.bonus-text {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--accent-gold);
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .main-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+    </style>
 </head>
 <body>
-    <div class="bg-overlay"></div>
     <div class="container">
         <header>
             <div class="header-content">
@@ -22,18 +652,18 @@
         <div class="main-grid">
             <div class="column-left">
                 <div class="card" id="stats-card">
-                    <h2><i class="icon-shield"></i> Vitals</h2>
+                    <h2>⚔️ Vitals</h2>
                     <div class="stat-row main-stats">
                         <div class="stat-block hp-block">
-                            <span class="label">HP</span>
+                            <span class="label">Hit Points</span>
                             <div class="hp-inputs">
                                 <input type="number" id="current-hp" placeholder="0">
                                 <span class="divider">/</span>
-                                <span id="max-hp"></span>
+                                <span id="max-hp" class="big-number"></span>
                             </div>
                         </div>
                         <div class="stat-block ac-block">
-                            <span class="label">AC</span>
+                            <span class="label">Armor Class</span>
                             <span id="armor-class" class="big-number"></span>
                         </div>
                     </div>
@@ -43,17 +673,17 @@
                             <input type="number" id="temp-hp" value="0">
                         </div>
                         <div class="stat-block">
-                            <span class="label">Prof.</span>
+                            <span class="label">Proficiency</span>
                             <span class="bonus-text">+<span id="prof-bonus"></span></span>
                         </div>
                     </div>
                     <div class="hit-dice">
-                        <small>Hit Dice: 3d12 / 3d10</small>
+                        <strong>Hit Dice:</strong> 3d12 (Barbarian) / 3d10 (Fighter)
                     </div>
                 </div>
 
                 <div class="card" id="status-card">
-                    <h2>Status & Saves</h2>
+                    <h2>💀 Status & Saves</h2>
                     <div class="death-saves-container">
                         <div class="death-row">
                             <span>Success</span>
@@ -73,7 +703,7 @@
                         </div>
                     </div>
                     <hr class="divider">
-                    <h4>Conditions</h4>
+                    <h4>⚠️ Conditions</h4>
                     <div class="conditions-grid">
                         <label><input type="checkbox"> Blinded</label>
                         <label><input type="checkbox"> Charmed</label>
@@ -87,11 +717,11 @@
 
             <div class="column-center">
                 <div class="card" id="resources-card">
-                    <h2>Combat Resources</h2>
+                    <h2>⚡ Combat Resources</h2>
                     
                     <div class="resource-highlight">
                         <div class="resource-header">
-                            <span>Rages</span>
+                            <span>🔥 Rages</span>
                             <span class="counter"><span id="rage-uses"></span> / <span id="max-rages"></span></span>
                         </div>
                         <button id="rage-btn" class="btn-main rage-btn">ENTER RAGE</button>
@@ -99,7 +729,7 @@
 
                     <div class="resource-highlight">
                         <div class="resource-header">
-                            <span>Unleash Incarnation</span>
+                            <span>👥 Unleash Incarnation</span>
                             <span class="counter"><span id="echo-uses"></span> / <span id="max-echo-uses"></span></span>
                         </div>
                         <button class="cooldown btn-secondary" id="unleash-btn">UNLEASH</button>
@@ -107,49 +737,52 @@
 
                     <div class="resource-grid">
                         <div class="resource-small">
-                            <span>Second Wind</span>
+                            <span>💚 Second Wind</span>
                             <button class="cooldown btn-small" id="second-wind-btn">USE</button>
                         </div>
                         <div class="resource-small">
-                            <span>Action Surge</span>
+                            <span>⚔️ Action Surge</span>
                             <button class="cooldown btn-small" id="action-surge-btn">USE</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="card" id="attacks-card">
-                    <h2>Attacks & Damage</h2>
+                    <h2>⚔️ Attacks & Damage</h2>
                     <div class="attack-list">
                         <div class="attack-entry">
-                            <div class="atk-header">Longsword</div> 
+                            <div class="atk-header">🗡️ Longsword (+1 Masterwork)</div> 
                             <div class="atk-details">
-                                <span class="hit-badge">+<span id="attack-bonus"></span> HIT</span>
-                                <span class="dmg-badge"><span id="damage-dice"></span> + <span id="damage-mod"></span> slash</span>
+                                <span class="hit-badge">+<span id="attack-bonus"></span> TO HIT</span>
+                                <span class="dmg-badge"><span id="damage-dice"></span> + <span id="damage-mod"></span> slashing</span>
                             </div>
                         </div>
                         <div class="attack-entry">
-                            <div class="atk-header">Light Crossbow</div>
+                            <div class="atk-header">🏹 Light Crossbow</div>
                             <div class="atk-details">
-                                <span class="hit-badge">+<span id="crossbow-attack-bonus"></span> HIT</span>
-                                <span class="dmg-badge">1d8 + <span id="crossbow-damage-mod"></span> pierce</span>
+                                <span class="hit-badge">+<span id="crossbow-attack-bonus"></span> TO HIT</span>
+                                <span class="dmg-badge">1d8 + <span id="crossbow-damage-mod"></span> piercing</span>
                             </div>
                         </div>
                     </div>
 
-                    <div id="rage-damage-bonus" class="hidden alert-box">
-                        🔥 RAGE ACTIVE (+2 Dmg) 🔥
+                    <div id="rage-damage-bonus" class="hidden">
+                        🔥 RAGE ACTIVE: +2 DAMAGE 🔥
                     </div>
 
                     <div id="beast-weapons" class="hidden beast-panel">
-                        <h4><span class="icon-claw"></span> Form of the Beast</h4>
+                        <h4>🐺 Form of the Beast</h4>
                         <div class="beast-entry">
-                            <strong>Bite:</strong> +<span class="beast-attack-bonus"></span> Hit, 1d8 + <span class="beast-damage-mod"></span> Pierce. (Heal on hit)
+                            <strong>🦷 Bite:</strong> +<span class="beast-attack-bonus"></span> to hit, 1d8 + <span class="beast-damage-mod"></span> piercing
+                            <br><small style="color: var(--text-muted)">• Heal HP equal to proficiency on hit</small>
                         </div>
                         <div class="beast-entry">
-                            <strong>Claws:</strong> +<span class="beast-attack-bonus"></span> Hit, 1d6 + <span class="beast-damage-mod"></span> Slash. (Double attack)
+                            <strong>🐾 Claws:</strong> +<span class="beast-attack-bonus"></span> to hit, 1d6 + <span class="beast-damage-mod"></span> slashing
+                            <br><small style="color: var(--text-muted)">• Make one extra claw attack as bonus action</small>
                         </div>
                         <div class="beast-entry">
-                            <strong>Tail:</strong> +<span class="beast-attack-bonus"></span> Hit, 1d8 + <span class="beast-damage-mod"></span> Pierce. (Reach & +AC Reaction)
+                            <strong>🦂 Tail:</strong> +<span class="beast-attack-bonus"></span> to hit, 1d8 + <span class="beast-damage-mod"></span> piercing
+                            <br><small style="color: var(--text-muted)">• Reach 10ft • Reaction: +1d8 to AC when hit</small>
                         </div>
                     </div>
                 </div>
@@ -157,33 +790,33 @@
 
             <div class="column-right">
                 <div class="card" id="stance-card">
-                    <h2>Stance</h2>
+                    <h2>🛡️ Stance</h2>
                     <button id="shield-btn" class="btn-toggle">Equip Shield</button>
                     <div id="shield-reminder" class="hidden info-box">
-                        <p>🛡️ <strong>Shield Up</strong></p>
-                        <small>Adv. on Dex saves & Initiative</small>
+                        <p><strong>Shield Master Active</strong></p>
+                        <small>Advantage on Dex saves & Initiative while shield is equipped</small>
                     </div>
                 </div>
                 
                 <div class="card" id="feats-card">
-                    <h2>Passives</h2>
+                    <h2>✨ Passive Abilities</h2>
                     <ul class="feat-list">
                         <li>
                             <strong>Slasher</strong>
-                            <p>Slash hit = -10ft speed.</p>
+                            <p>When you hit with slashing damage, reduce target's speed by 10ft until start of your next turn.</p>
                         </li>
                         <li>
-                            <strong>Reckless</strong>
-                            <p>Advantage on STR attacks (Enemies get Adv against you).</p>
+                            <strong>Reckless Attack</strong>
+                            <p>Gain advantage on melee attack rolls using STR during your turn, but attack rolls against you have advantage until your next turn.</p>
                         </li>
                         <li>
                             <strong>Danger Sense</strong>
-                            <p>Advantage on DEX saves vs visible effects.</p>
+                            <p>Advantage on Dexterity saves against effects you can see (traps, spells, etc.) while not blinded, deafened, or incapacitated.</p>
                         </li>
                     </ul>
                 </div>
 
-                 <div class="controls">
+                <div class="controls">
                     <button id="short-rest-btn" class="rest-btn">Short Rest</button>
                     <button id="long-rest-btn" class="rest-btn">Long Rest</button>
                 </div>
@@ -191,6 +824,217 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
-</body>
-</html>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Character Stats Configuration
+    const CHARACTER = {
+        level: 6,
+        maxHp: 72,
+        abilityScores: { str: 19, dex: 14, con: 17 },
+        armor: { base: 14, type: 'medium' },
+        miscAcBonus: 1,
+        fightingStyle: 'defense',
+        magicWeaponBonus: 1,
+        rageDamageBonus: 2,
+        rageAttackBonus: 2,
+    };
+
+    // Character State
+    const state = {
+        isRaging: false,
+        isShieldEquipped: true,
+        currentHp: 0,
+        currentRages: 0,
+        currentEchoUses: 0,
+    };
+
+    // Derived Stats (calculated on init)
+    const derived = {
+        profBonus: 0,
+        strMod: 0,
+        dexMod: 0,
+        conMod: 0,
+    };
+
+    // DOM Elements
+    const els = {
+        body: document.body,
+        currentHp: document.getElementById('current-hp'),
+        maxHp: document.getElementById('max-hp'),
+        ac: document.getElementById('armor-class'),
+        profBonus: document.getElementById('prof-bonus'),
+        rageUses: document.getElementById('rage-uses'),
+        maxRages: document.getElementById('max-rages'),
+        echoUses: document.getElementById('echo-uses'),
+        maxEchoUses: document.getElementById('max-echo-uses'),
+        rageBtn: document.getElementById('rage-btn'),
+        shieldBtn: document.getElementById('shield-btn'),
+        secondWindBtn: document.getElementById('second-wind-btn'),
+        actionSurgeBtn: document.getElementById('action-surge-btn'),
+        unleashBtn: document.getElementById('unleash-btn'),
+        shieldReminder: document.getElementById('shield-reminder'),
+        attackBonus: document.getElementById('attack-bonus'),
+        damageDice: document.getElementById('damage-dice'),
+        damageMod: document.getElementById('damage-mod'),
+        crossbowAttackBonus: document.getElementById('crossbow-attack-bonus'),
+        crossbowDamageMod: document.getElementById('crossbow-damage-mod'),
+        beastAttackBonuses: document.querySelectorAll('.beast-attack-bonus'),
+        beastDamageMods: document.querySelectorAll('.beast-damage-mod'),
+        rageDamageBonus: document.getElementById('rage-damage-bonus'),
+        beastWeapons: document.getElementById('beast-weapons'),
+        shortRestBtn: document.getElementById('short-rest-btn'),
+        longRestBtn: document.getElementById('long-rest-btn'),
+    };
+
+    // Calculate ability modifier
+    const getMod = (score) => Math.floor((score - 10) / 2);
+
+    // Update all displays
+    function updateDisplay() {
+        // AC Calculation
+        const dexBonusForAc = Math.min(derived.dexMod, 2);
+        let ac = CHARACTER.armor.base + dexBonusForAc + CHARACTER.miscAcBonus;
+        if (CHARACTER.fightingStyle === 'defense') ac += 1;
+        if (state.isShieldEquipped) ac += 2;
+        els.ac.textContent = ac;
+
+        // Longsword Attack/Damage
+        let attackBonus = derived.strMod + derived.profBonus + CHARACTER.magicWeaponBonus;
+        let damageMod = derived.strMod + CHARACTER.magicWeaponBonus;
+        
+        if (state.isRaging) {
+            attackBonus += CHARACTER.rageAttackBonus;
+            damageMod += CHARACTER.rageDamageBonus;
+        }
+        
+        els.attackBonus.textContent = `${attackBonus}`;
+        els.damageMod.textContent = damageMod >= 0 ? `${damageMod}` : damageMod;
+        els.damageDice.textContent = state.isShieldEquipped ? '1d8' : '1d10';
+
+        // Crossbow (unaffected by rage)
+        const crossbowAttack = derived.dexMod + derived.profBonus;
+        els.crossbowAttackBonus.textContent = `${crossbowAttack}`;
+        els.crossbowDamageMod.textContent = derived.dexMod >= 0 ? `${derived.dexMod}` : derived.dexMod;
+
+        // Beast Weapons
+        const beastAttack = derived.strMod + derived.profBonus;
+        let beastDamage = derived.strMod;
+        if (state.isRaging) beastDamage += CHARACTER.rageDamageBonus;
+        
+        els.beastAttackBonuses.forEach(el => el.textContent = `${beastAttack}`);
+        els.beastDamageMods.forEach(el => el.textContent = beastDamage >= 0 ? `${beastDamage}` : beastDamage);
+
+        // UI States
+        els.body.classList.toggle('raging', state.isRaging);
+        els.shieldBtn.classList.toggle('active', state.isShieldEquipped);
+        els.shieldBtn.textContent = state.isShieldEquipped ? 'Unequip Shield' : 'Equip Shield';
+        els.rageBtn.textContent = state.isRaging ? 'END RAGE' : 'RAGE';
+        els.shieldReminder.classList.toggle('hidden', !state.isShieldEquipped);
+        
+        // Show/hide rage effects
+        els.rageDamageBonus.classList.toggle('hidden', !state.isRaging);
+        els.beastWeapons.classList.toggle('hidden', !state.isRaging);
+        
+        // Resource counts
+        els.rageUses.textContent = state.currentRages;
+        els.echoUses.textContent = state.currentEchoUses;
+    }
+
+    // Event Handlers
+    els.rageBtn.addEventListener('click', () => {
+        if (state.isRaging) {
+            state.isRaging = false;
+        } else if (state.currentRages > 0) {
+            state.isRaging = true;
+            state.currentRages--;
+        } else {
+            alert("No rages left! Take a long rest to restore.");
+            return;
+        }
+        updateDisplay();
+    });
+
+    els.shieldBtn.addEventListener('click', () => {
+        state.isShieldEquipped = !state.isShieldEquipped;
+        updateDisplay();
+    });
+
+    els.unleashBtn.addEventListener('click', () => {
+        if (state.currentEchoUses > 0) {
+            state.currentEchoUses--;
+            updateDisplay();
+        } else {
+            alert("No uses of Unleash Incarnation left! Take a long rest to restore.");
+        }
+    });
+
+    els.secondWindBtn.addEventListener('click', () => {
+        if (!els.secondWindBtn.classList.contains('used')) {
+            els.secondWindBtn.classList.add('used');
+            els.secondWindBtn.textContent = 'USED';
+        }
+    });
+
+    els.actionSurgeBtn.addEventListener('click', () => {
+        if (!els.actionSurgeBtn.classList.contains('used')) {
+            els.actionSurgeBtn.classList.add('used');
+            els.actionSurgeBtn.textContent = 'USED';
+        }
+    });
+
+    els.shortRestBtn.addEventListener('click', () => {
+        els.secondWindBtn.classList.remove('used');
+        els.secondWindBtn.textContent = 'USE';
+        els.actionSurgeBtn.classList.remove('used');
+        els.actionSurgeBtn.textContent = 'USE';
+        
+        // Visual feedback
+        const card = document.getElementById('resources-card');
+        card.style.boxShadow = '0 0 30px rgba(46, 204, 113, 0.5)';
+        setTimeout(() => {
+            card.style.boxShadow = '';
+        }, 1000);
+    });
+
+    els.longRestBtn.addEventListener('click', () => {
+        initialize();
+        
+        // Visual feedback
+        const card = document.getElementById('resources-card');
+        card.style.boxShadow = '0 0 30px rgba(255, 215, 0, 0.5)';
+        setTimeout(() => {
+            card.style.boxShadow = '';
+        }, 1000);
+    });
+
+    // Initialize character
+    function initialize() {
+        // Calculate derived stats
+        derived.profBonus = Math.ceil(1 + (CHARACTER.level / 4));
+        derived.strMod = getMod(CHARACTER.abilityScores.str);
+        derived.dexMod = getMod(CHARACTER.abilityScores.dex);
+        derived.conMod = getMod(CHARACTER.abilityScores.con);
+
+        // Reset state
+        state.currentHp = CHARACTER.maxHp;
+        state.currentRages = 3;
+        state.currentEchoUses = derived.conMod;
+        state.isRaging = false;
+
+        // Reset abilities
+        els.secondWindBtn.classList.remove('used');
+        els.secondWindBtn.textContent = 'USE';
+        els.actionSurgeBtn.classList.remove('used');
+        els.actionSurgeBtn.textContent = 'USE';
+
+        // Update static displays
+        els.currentHp.value = CHARACTER.maxHp;
+        els.maxHp.textContent = CHARACTER.maxHp;
+        els.profBonus.textContent = derived.profBonus;
+        els.maxRages.textContent = state.currentRages;
+        els.maxEchoUses.textContent = state.currentEchoUses;
+
+        updateDisplay();
+    }
+
+    initialize();
