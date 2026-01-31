@@ -825,7 +825,7 @@ hr.divider {
     </div>
 
     <script>
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     // Character Stats Configuration
     const CHARACTER = {
         level: 6,
@@ -887,7 +887,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Calculate ability modifier
-    const getMod = (score) => Math.floor((score - 10) / 2);
+    const getMod = function(score) {
+        return Math.floor((score - 10) / 2);
+    };
 
     // Update all displays
     function updateDisplay() {
@@ -907,22 +909,26 @@ document.addEventListener('DOMContentLoaded', () => {
             damageMod += CHARACTER.rageDamageBonus;
         }
         
-        els.attackBonus.textContent = `${attackBonus}`;
-        els.damageMod.textContent = damageMod >= 0 ? `${damageMod}` : damageMod;
+        els.attackBonus.textContent = attackBonus;
+        els.damageMod.textContent = damageMod >= 0 ? damageMod : damageMod;
         els.damageDice.textContent = state.isShieldEquipped ? '1d8' : '1d10';
 
         // Crossbow (unaffected by rage)
         const crossbowAttack = derived.dexMod + derived.profBonus;
-        els.crossbowAttackBonus.textContent = `${crossbowAttack}`;
-        els.crossbowDamageMod.textContent = derived.dexMod >= 0 ? `${derived.dexMod}` : derived.dexMod;
+        els.crossbowAttackBonus.textContent = crossbowAttack;
+        els.crossbowDamageMod.textContent = derived.dexMod >= 0 ? derived.dexMod : derived.dexMod;
 
         // Beast Weapons
         const beastAttack = derived.strMod + derived.profBonus;
         let beastDamage = derived.strMod;
         if (state.isRaging) beastDamage += CHARACTER.rageDamageBonus;
         
-        els.beastAttackBonuses.forEach(el => el.textContent = `${beastAttack}`);
-        els.beastDamageMods.forEach(el => el.textContent = beastDamage >= 0 ? `${beastDamage}` : beastDamage);
+        els.beastAttackBonuses.forEach(function(el) {
+            el.textContent = beastAttack;
+        });
+        els.beastDamageMods.forEach(function(el) {
+            el.textContent = beastDamage >= 0 ? beastDamage : beastDamage;
+        });
 
         // UI States
         els.body.classList.toggle('raging', state.isRaging);
@@ -941,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event Handlers
-    els.rageBtn.addEventListener('click', () => {
+    els.rageBtn.addEventListener('click', function() {
         if (state.isRaging) {
             state.isRaging = false;
         } else if (state.currentRages > 0) {
@@ -954,12 +960,12 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDisplay();
     });
 
-    els.shieldBtn.addEventListener('click', () => {
+    els.shieldBtn.addEventListener('click', function() {
         state.isShieldEquipped = !state.isShieldEquipped;
         updateDisplay();
     });
 
-    els.unleashBtn.addEventListener('click', () => {
+    els.unleashBtn.addEventListener('click', function() {
         if (state.currentEchoUses > 0) {
             state.currentEchoUses--;
             updateDisplay();
@@ -968,21 +974,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    els.secondWindBtn.addEventListener('click', () => {
+    els.secondWindBtn.addEventListener('click', function() {
         if (!els.secondWindBtn.classList.contains('used')) {
             els.secondWindBtn.classList.add('used');
             els.secondWindBtn.textContent = 'USED';
         }
     });
 
-    els.actionSurgeBtn.addEventListener('click', () => {
+    els.actionSurgeBtn.addEventListener('click', function() {
         if (!els.actionSurgeBtn.classList.contains('used')) {
             els.actionSurgeBtn.classList.add('used');
             els.actionSurgeBtn.textContent = 'USED';
         }
     });
 
-    els.shortRestBtn.addEventListener('click', () => {
+    els.shortRestBtn.addEventListener('click', function() {
         els.secondWindBtn.classList.remove('used');
         els.secondWindBtn.textContent = 'USE';
         els.actionSurgeBtn.classList.remove('used');
@@ -991,18 +997,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Visual feedback
         const card = document.getElementById('resources-card');
         card.style.boxShadow = '0 0 30px rgba(46, 204, 113, 0.5)';
-        setTimeout(() => {
+        setTimeout(function() {
             card.style.boxShadow = '';
         }, 1000);
     });
 
-    els.longRestBtn.addEventListener('click', () => {
+    els.longRestBtn.addEventListener('click', function() {
         initialize();
         
         // Visual feedback
         const card = document.getElementById('resources-card');
         card.style.boxShadow = '0 0 30px rgba(255, 215, 0, 0.5)';
-        setTimeout(() => {
+        setTimeout(function() {
             card.style.boxShadow = '';
         }, 1000);
     });
@@ -1037,4 +1043,9 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDisplay();
     }
 
+    // Run initialization
     initialize();
+});
+    </script>
+</body>
+</html>
