@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>August's Echo — Dice Roller</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Metamorphous&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    html, body { margin: 0; padding: 0; background: #0A0E14; }
+
+    :root{
+      --void:#0A0E14;
+      --echo:#5FE3D6;        /* spectral cyan */
+      --echo-dim:#2C7068;
+      --ghost:#E8F4F2;       /* ghost white */
+      --ember:#FF5E3A;       /* beast fury */
+      --bone:#C9B89A;        /* worn labels */
+      --blood:#7A1F1A;
+      --line:rgba(95,227,214,0.16);
+    }
+
+    *{box-sizing:border-box;}
+    .root{
+      min-height:100vh;
+      margin:0;
+      background:
+        radial-gradient(120% 80% at 50% -10%, rgba(95,227,214,0.10), transparent 60%),
+        radial-gradient(90% 70% at 50% 120%, rgba(122,31,26,0.10), transparent 55%),
+        var(--void);
+      color:var(--ghost);
+      font-family:'Spectral',Georgia,serif;
+      padding:clamp(16px,4vw,40px);
+      display:flex;flex-direction:column;align-items:center;gap:28px;
+    }
+
+    /* masthead */
+    .masthead{text-align:center;}
+    .eyebrow{
+      font-family:'Metamorphous',serif;
+      letter-spacing:0.34em;text-transform:uppercase;
+      font-size:11px;color:var(--echo);opacity:0.8;
+    }
+    .title{
+      font-family:'Metamorphous',serif;
+      font-size:clamp(38px,8vw,68px);
+      margin:6px 0 4px;line-height:0.95;
+      color:var(--ghost);
+      text-shadow:0 0 26px rgba(95,227,214,0.35), 0 2px 0 rgba(0,0,0,0.5);
+    }
+    .tagline{margin:0;color:var(--bone);font-style:italic;font-size:15px;opacity:0.85;}
+
+    /* board */
+    .board{
+      width:100%;max-width:960px;
+      display:grid;grid-template-columns:1.1fr 0.9fr;gap:clamp(20px,4vw,44px);
+      align-items:start;
+    }
+    @media (max-width:760px){.board{grid-template-columns:1fr;}}
+
+    /* stage */
+    .stage-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+    .stage{
+      position:relative;
+      width:min(360px,82vw);height:min(360px,82vw);
+      display:flex;align-items:center;justify-content:center;
+      border-radius:50%;
+    }
+    .ring{
+      position:absolute;inset:6%;border-radius:50%;
+      border:1px solid var(--line);
+      box-shadow:inset 0 0 60px rgba(95,227,214,0.08), 0 0 50px rgba(95,227,214,0.06);
+      animation:spinSlow 38s linear infinite;
+    }
+    .ring::before,.ring::after{
+      content:"";position:absolute;border-radius:50%;border:1px dashed rgba(95,227,214,0.18);
+    }
+    .ring::before{inset:8%;}
+    .ring::after{inset:18%;border-style:solid;border-color:rgba(95,227,214,0.07);}
+    .ring-2{inset:16%;border-color:rgba(95,227,214,0.10);animation:spinSlow 24s linear infinite reverse;}
+    @keyframes spinSlow{to{transform:rotate(360deg);}}
+
+    .die-stack{position:relative;width:54%;height:54%;display:flex;align-items:center;justify-content:center;}
+    .die{position:absolute;width:100%;height:100%;overflow:visible;}
+    .die-poly{
+      fill:rgba(14,28,38,0.72);
+      stroke:var(--echo);stroke-width:2.4;
+      filter:drop-shadow(0 0 10px rgba(95,227,214,0.55));
+    }
+    .die-facet{fill:rgba(95,227,214,0.10);stroke:rgba(95,227,214,0.35);stroke-width:1;}
+    .die-number{
+      fill:var(--ghost);
+      font-family:'Archivo Black',sans-serif;
+      font-size:34px;letter-spacing:-1px;
+      filter:drop-shadow(0 0 8px rgba(95,227,214,0.6));
+    }
+    .is-idle .die-main{animation:bob 4.5s ease-in-out infinite;}
+    @keyframes bob{0%,100%{transform:translateY(-2%);}50%{transform:translateY(2%);}}
+
+    .is-rolling .die-main{animation:tumble 0.5s linear infinite;}
+    @keyframes tumble{
+      0%{transform:rotate(0deg) scale(1);}
+      50%{transform:rotate(180deg) scale(1.07);}
+      100%{transform:rotate(360deg) scale(1);}
+    }
+    /* spectral echo trails */
+    .echo{opacity:0;}
+    .echo .die-poly{fill:none;stroke:var(--echo);}
+    .echo-1{animation:echoTrail 0.5s linear infinite;animation-delay:-0.08s;}
+    .echo-2{animation:echoTrail 0.5s linear infinite;animation-delay:-0.16s;}
+    .echo-3{animation:echoTrail 0.5s linear infinite;animation-delay:-0.24s;}
+    @keyframes echoTrail{
+      0%{opacity:0.0;transform:rotate(0deg) scale(1) translateX(0);}
+      40%{opacity:0.45;transform:rotate(150deg) scale(1.12) translateX(8%);}
+      100%{opacity:0;transform:rotate(360deg) scale(1.2) translateX(0);}
+    }
+
+    /* beast crit */
+    .crit-beast .die-poly{stroke:var(--ember);filter:drop-shadow(0 0 16px rgba(255,94,58,0.9));}
+    .crit-beast .die-number{fill:#fff;filter:drop-shadow(0 0 12px rgba(255,94,58,0.9));}
+    .crit-beast .ring{border-color:rgba(255,94,58,0.28);box-shadow:inset 0 0 80px rgba(255,94,58,0.15),0 0 80px rgba(255,94,58,0.25);}
+    .crit-beast{animation:shake 0.5s cubic-bezier(.36,.07,.19,.97);}
+    @keyframes shake{
+      10%,90%{transform:translate(-2px,1px);}
+      20%,80%{transform:translate(4px,-2px);}
+      30%,50%,70%{transform:translate(-6px,2px);}
+      40%,60%{transform:translate(6px,-1px);}
+    }
+    .claws{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:50%;}
+    .claws span{
+      position:absolute;top:-10%;left:-30%;width:160%;height:6px;
+      background:linear-gradient(90deg,transparent,var(--ember),#fff,var(--ember),transparent);
+      transform:rotate(38deg);filter:blur(0.4px) drop-shadow(0 0 8px var(--ember));
+      animation:claw 0.55s ease-out forwards;
+    }
+    .claws span:nth-child(1){top:24%;animation-delay:0s;}
+    .claws span:nth-child(2){top:46%;animation-delay:0.07s;}
+    .claws span:nth-child(3){top:68%;animation-delay:0.14s;}
+    @keyframes claw{0%{transform:translateX(-60%) rotate(38deg);opacity:0;}30%{opacity:1;}100%{transform:translateX(60%) rotate(38deg);opacity:0;}}
+
+    /* shatter crit */
+    .crit-shatter .die-poly{stroke:var(--blood);fill:rgba(60,12,10,0.7);filter:drop-shadow(0 0 12px rgba(122,31,26,0.8));animation:flicker 0.5s steps(2) 2;}
+    .crit-shatter .die-number{fill:#E7A39B;}
+    .crit-shatter .ring{border-color:rgba(122,31,26,0.3);}
+    @keyframes flicker{0%{opacity:1;}50%{opacity:0.35;}100%{opacity:1;}}
+    .crack{
+      position:absolute;inset:0;pointer-events:none;
+      background:
+        linear-gradient(58deg,transparent 48%,rgba(231,163,155,0.9) 49%,transparent 50%),
+        linear-gradient(-32deg,transparent 46%,rgba(231,163,155,0.7) 47%,transparent 48%),
+        linear-gradient(8deg,transparent 52%,rgba(231,163,155,0.6) 53%,transparent 54%);
+      animation:crackIn 0.6s ease-out forwards;
+    }
+    @keyframes crackIn{0%{opacity:0;transform:scale(0.6);}25%{opacity:1;}100%{opacity:0;transform:scale(1.1);}}
+
+    /* readout */
+    .readout{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;}
+    .readout-notation{font-family:'Metamorphous',serif;letter-spacing:0.18em;font-size:13px;color:var(--bone);text-transform:lowercase;}
+    .verdict{font-family:'Metamorphous',serif;font-size:clamp(18px,4vw,24px);letter-spacing:0.05em;}
+    .verdict-calm{color:var(--echo);text-shadow:0 0 14px rgba(95,227,214,0.4);}
+    .verdict-beast{color:var(--ember);text-shadow:0 0 18px rgba(255,94,58,0.6);}
+    .verdict-shatter{color:#E7A39B;text-shadow:0 0 14px rgba(122,31,26,0.7);}
+    .flourish{margin:0;color:var(--bone);font-style:italic;font-size:14px;text-align:center;min-height:1.2em;opacity:0.9;}
+
+    /* controls */
+    .controls{display:flex;flex-direction:column;gap:20px;}
+    .control-block{display:flex;flex-direction:column;gap:9px;}
+    .control-label{
+      font-family:'Metamorphous',serif;font-size:11px;letter-spacing:0.26em;
+      text-transform:uppercase;color:var(--bone);
+    }
+    .hint{text-transform:none;letter-spacing:0;font-family:'Spectral',serif;font-style:italic;opacity:0.6;font-size:11px;}
+    .control-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+
+    .dice-row{display:flex;flex-wrap:wrap;gap:8px;}
+    .die-pick{
+      font-family:'Metamorphous',serif;font-size:15px;
+      padding:10px 14px;min-width:54px;cursor:pointer;
+      background:rgba(14,28,38,0.6);color:var(--ghost);
+      border:1px solid var(--line);border-radius:9px;
+      transition:all 0.18s ease;
+    }
+    .die-pick:hover{border-color:var(--echo);color:var(--echo);transform:translateY(-1px);}
+    .die-pick.active{
+      background:rgba(95,227,214,0.14);border-color:var(--echo);color:var(--echo);
+      box-shadow:0 0 18px rgba(95,227,214,0.3),inset 0 0 12px rgba(95,227,214,0.12);
+    }
+
+    .stepper{display:flex;align-items:center;gap:6px;}
+    .stepper button{
+      width:44px;height:44px;font-size:22px;cursor:pointer;
+      background:rgba(14,28,38,0.6);color:var(--echo);
+      border:1px solid var(--line);border-radius:9px;
+      font-family:'Spectral',serif;transition:all 0.15s ease;
+    }
+    .stepper button:hover{border-color:var(--echo);background:rgba(95,227,214,0.12);}
+    .stepper-val{
+      flex:1;text-align:center;font-family:'Archivo Black',sans-serif;
+      font-size:22px;color:var(--ghost);min-width:48px;
+    }
+
+    .stance-row{display:flex;gap:6px;}
+    .stance{
+      flex:1;padding:11px 6px;cursor:pointer;font-family:'Spectral',serif;font-size:13px;
+      background:rgba(14,28,38,0.6);color:var(--bone);
+      border:1px solid var(--line);border-radius:9px;transition:all 0.16s ease;
+    }
+    .stance:hover:not(:disabled){border-color:var(--echo);color:var(--ghost);}
+    .stance.active{background:rgba(95,227,214,0.12);border-color:var(--echo);color:var(--echo);}
+    .stance.active.adv{background:rgba(95,227,214,0.16);border-color:var(--echo);color:var(--echo);box-shadow:0 0 14px rgba(95,227,214,0.25);}
+    .stance.active.dis{background:rgba(122,31,26,0.18);border-color:var(--blood);color:#E7A39B;box-shadow:0 0 14px rgba(122,31,26,0.25);}
+    .stance:disabled{opacity:0.35;cursor:not-allowed;}
+
+    .roll-btn{
+      margin-top:4px;padding:18px;cursor:pointer;
+      display:flex;flex-direction:column;align-items:center;gap:3px;
+      background:linear-gradient(180deg,rgba(95,227,214,0.18),rgba(95,227,214,0.06));
+      border:1px solid var(--echo);border-radius:12px;color:var(--ghost);
+      transition:all 0.2s ease;position:relative;overflow:hidden;
+    }
+    .roll-btn:hover:not(:disabled){
+      box-shadow:0 0 30px rgba(95,227,214,0.4),inset 0 0 20px rgba(95,227,214,0.1);
+      transform:translateY(-2px);
+    }
+    .roll-btn:active:not(:disabled){transform:translateY(0);}
+    .roll-btn:disabled{opacity:0.6;cursor:wait;}
+    .roll-btn-label{font-family:'Metamorphous',serif;font-size:24px;letter-spacing:0.12em;text-transform:uppercase;}
+    .roll-btn-sub{font-family:'Spectral',serif;font-size:13px;color:var(--echo);letter-spacing:0.06em;}
+
+    .mute{
+      align-self:center;background:none;border:none;cursor:pointer;
+      color:var(--bone);font-family:'Spectral',serif;font-size:12px;opacity:0.6;
+      letter-spacing:0.08em;transition:opacity 0.15s;
+    }
+    .mute:hover{opacity:1;color:var(--echo);}
+
+    /* log */
+    .log{width:100%;max-width:960px;border-top:1px solid var(--line);padding-top:18px;}
+    .log-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px;}
+    .log-title{font-family:'Metamorphous',serif;font-size:12px;letter-spacing:0.26em;text-transform:uppercase;color:var(--bone);}
+    .log-clear{background:none;border:none;color:var(--echo);cursor:pointer;font-family:'Spectral',serif;font-size:12px;opacity:0.7;}
+    .log-clear:hover{opacity:1;}
+    .log-empty{color:var(--bone);font-style:italic;opacity:0.55;margin:0;font-size:14px;}
+    .log-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+    .log-item{
+      display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+      padding:9px 14px;background:rgba(14,28,38,0.45);border:1px solid rgba(95,227,214,0.08);
+      border-radius:8px;border-left:3px solid var(--echo-dim);
+    }
+    .log-item.beast{border-left-color:var(--ember);background:rgba(255,94,58,0.06);}
+    .log-item.shatter{border-left-color:var(--blood);background:rgba(122,31,26,0.06);}
+    .log-not{font-family:'Metamorphous',serif;font-size:13px;color:var(--echo);letter-spacing:0.06em;}
+    .log-detail{font-size:13px;color:var(--bone);}
+    .log-detail em{color:var(--ghost);font-style:normal;opacity:0.8;}
+    .log-total{font-family:'Archivo Black',sans-serif;font-size:20px;color:var(--ghost);}
+    .log-item.beast .log-total{color:var(--ember);}
+    .log-item.shatter .log-total{color:#E7A39B;}
+
+    /* focus + reduced motion */
+    button:focus-visible{outline:2px solid var(--echo);outline-offset:2px;}
+    @media (prefers-reduced-motion:reduce){
+      .ring,.ring-2,.is-idle .die-main,.is-rolling .die-main{animation:none!important;}
+      .crit-beast{animation:none!important;}
+    }
+  </style>
+</head>
+<body>
+  <div class="root">
+    <header class="masthead">
+      <span class="eyebrow">Echo Knight · Path of the Beast</span>
+      <h1 class="title">August's Echo</h1>
+      <p class="tagline">Manifest the die. Let the Beast decide.</p>
+    </header>
+
+    <main class="board">
+      <section class="stage-wrap">
+        <div class="stage is-idle" id="stage" aria-live="polite">
+          <div class="ring"></div>
+          <div class="ring ring-2"></div>
+          <div class="die-stack" id="dieStack"></div>
+        </div>
+        <div class="readout">
+          <span class="readout-notation" id="notation">1d20</span>
+          <span class="verdict verdict-calm" id="verdict">Awaiting the call</span>
+        </div>
+        <p class="flourish" id="flourish"></p>
+      </section>
+
+      <section class="controls">
+        <div class="control-block">
+          <label class="control-label">The Die</label>
+          <div class="dice-row" id="diceRow"></div>
+        </div>
+
+        <div class="control-grid">
+          <div class="control-block">
+            <label class="control-label">How many</label>
+            <div class="stepper">
+              <button id="qtyDown" aria-label="One fewer die">−</button>
+              <span class="stepper-val" id="qtyVal">1</span>
+              <button id="qtyUp" aria-label="One more die">+</button>
+            </div>
+          </div>
+          <div class="control-block">
+            <label class="control-label">Modifier</label>
+            <div class="stepper">
+              <button id="modDown" aria-label="Lower modifier">−</button>
+              <span class="stepper-val" id="modVal">+0</span>
+              <button id="modUp" aria-label="Raise modifier">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-block">
+          <label class="control-label">Echo Stance <span class="hint" id="stanceHint">(single d20 only)</span></label>
+          <div class="stance-row">
+            <button class="stance" id="stanceDis">Disadvantage</button>
+            <button class="stance active" id="stanceNorm">Straight</button>
+            <button class="stance" id="stanceAdv">Advantage</button>
+          </div>
+        </div>
+
+        <button class="roll-btn" id="rollBtn">
+          <span class="roll-btn-label" id="rollLabel">Roll</span>
+          <span class="roll-btn-sub" id="rollSub">1d20</span>
+        </button>
+
+        <button class="mute" id="muteBtn" aria-pressed="false">♪ sound on</button>
+      </section>
+    </main>
+
+    <section class="log">
+      <div class="log-head">
+        <span class="log-title">Field Journal</span>
+        <button class="log-clear" id="logClear" style="display:none">clear</button>
+      </div>
+      <div id="logBody"></div>
+    </section>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* ============================================================
+       AUGUST'S ECHO — Echo Knight / Beast Barbarian dice roller.
+       Pure vanilla JS — no frameworks, no build step, no CDN.
+       ============================================================ */
+
+    var DICE = [4, 6, 8, 10, 12, 20, 100];
+
+    var GEOMETRY = {
+      4:   { type: "poly", pts: "50,9 91,82 9,82" },
+      6:   { type: "rect" },
+      8:   { type: "poly", pts: "50,6 92,50 50,94 8,50" },
+      10:  { type: "poly", pts: "50,5 90,40 72,93 28,93 10,40" },
+      12:  { type: "poly", pts: "50,5 94,37 77,91 23,91 6,37" },
+      20:  { type: "poly", pts: "50,4 89,27 89,73 50,96 11,73 11,27" },
+      100: { type: "poly", pts: "50,5 90,40 72,93 28,93 10,40" }
+    };
+
+    var BEAST_LINES = [
+      "August and his echo strike as one.",
+      "Claws find their mark — clean through.",
+      "The Beast answers. Nothing survives that.",
+      "Primal fury given perfect form."
+    ];
+    var SHATTER_LINES = [
+      "The echo flickers, then fails.",
+      "The blade meets only empty air.",
+      "Fortune turns its back on the Beast.",
+      "The manifest form cracks and scatters."
+    ];
+
+    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+
+    var state = { dieType: 20, qty: 1, modifier: 0, mode: "normal", rolling: false, muted: false, log: [], display: 20 };
+    var timers = [];
+
+    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---------- audio ---------- */
+    var audioCtx = null;
+    function ensureCtx() {
+      if (!audioCtx) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (AC) audioCtx = new AC();
+      }
+      if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+      return audioCtx;
+    }
+    function tone(freq, dur, type, gain, slideTo) {
+      if (state.muted) return;
+      var ctx = ensureCtx(); if (!ctx) return;
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = type || "sine";
+      o.frequency.setValueAtTime(freq, ctx.currentTime);
+      if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, ctx.currentTime + dur);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(gain || 0.08, ctx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+      o.connect(g).connect(ctx.destination);
+      o.start(); o.stop(ctx.currentTime + dur + 0.02);
+    }
+    function noise(dur, gain) {
+      if (state.muted) return;
+      var ctx = ensureCtx(); if (!ctx) return;
+      var buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+      var d = buf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+      var src = ctx.createBufferSource(); src.buffer = buf;
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(gain || 0.05, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+      var f = ctx.createBiquadFilter(); f.type = "highpass"; f.frequency.value = 600;
+      src.connect(f).connect(g).connect(ctx.destination);
+      src.start();
+    }
+    var SFX = {
+      tick: function () { tone(880 + Math.random() * 400, 0.04, "triangle", 0.025); },
+      impact: function () { tone(140, 0.18, "sine", 0.12, 60); noise(0.12, 0.04); },
+      shimmer: function () { tone(1320, 0.5, "triangle", 0.04, 2640); },
+      beast: function () { tone(70, 0.6, "sawtooth", 0.16, 45); noise(0.25, 0.09); setTimeout(function () { tone(110, 0.4, "sawtooth", 0.1, 70); }, 60); },
+      shatter: function () { noise(0.4, 0.08); tone(420, 0.5, "square", 0.06, 90); }
+    };
+
+    /* ---------- elements ---------- */
+    var $ = function (id) { return document.getElementById(id); };
+    var stage = $("stage"), dieStack = $("dieStack");
+    var notationEl = $("notation"), verdictEl = $("verdict"), flourishEl = $("flourish");
+    var diceRow = $("diceRow"), qtyVal = $("qtyVal"), modVal = $("modVal");
+    var stanceHint = $("stanceHint"), stanceDis = $("stanceDis"), stanceNorm = $("stanceNorm"), stanceAdv = $("stanceAdv");
+    var rollBtn = $("rollBtn"), rollLabel = $("rollLabel"), rollSub = $("rollSub"), muteBtn = $("muteBtn");
+    var logBody = $("logBody"), logClear = $("logClear");
+
+    /* ---------- die rendering ---------- */
+    function dieMarkup(dieType, value, cls) {
+      var g = GEOMETRY[dieType];
+      var shape = g.type === "rect"
+        ? '<rect x="13" y="13" width="74" height="74" rx="11" class="die-poly"/>'
+        : '<polygon points="' + g.pts + '" class="die-poly"/>';
+      var facet = (g.type === "poly" && dieType === 20)
+        ? '<polygon points="50,4 11,27 50,50 89,27" class="die-facet"/>' : "";
+      return '<svg viewBox="0 0 100 100" class="' + cls + '" aria-hidden="true">' +
+        shape + facet +
+        '<text x="50" y="50" class="die-number" dominant-baseline="central" text-anchor="middle">' + value + '</text>' +
+        '</svg>';
+    }
+    function buildStack(rolling) {
+      var html = "";
+      if (rolling && !reduceMotion) {
+        html += dieMarkup(state.dieType, state.display, "die echo echo-1");
+        html += dieMarkup(state.dieType, state.display, "die echo echo-2");
+        html += dieMarkup(state.dieType, state.display, "die echo echo-3");
+      }
+      html += dieMarkup(state.dieType, state.display, "die die-main");
+      dieStack.innerHTML = html;
+    }
+    function setDisplay(value) {
+      state.display = value;
+      var nums = dieStack.querySelectorAll(".die-number");
+      for (var i = 0; i < nums.length; i++) nums[i].textContent = value;
+    }
+
+    /* ---------- notation / controls ---------- */
+    function advAllowed() { return state.dieType === 20 && state.qty === 1; }
+    function notation() {
+      var base = state.mode === "adv" ? "2d20kh1" : state.mode === "dis" ? "2d20kl1" : (state.qty + "d" + state.dieType);
+      var m = state.modifier > 0 ? " + " + state.modifier : state.modifier < 0 ? " − " + Math.abs(state.modifier) : "";
+      return base + m;
+    }
+    function refreshControls() {
+      qtyVal.textContent = state.qty;
+      modVal.textContent = state.modifier >= 0 ? "+" + state.modifier : "" + state.modifier;
+
+      var allow = advAllowed();
+      stanceDis.disabled = !allow; stanceNorm.disabled = !allow; stanceAdv.disabled = !allow;
+      stanceHint.style.display = allow ? "none" : "inline";
+
+      stanceDis.className = "stance" + (state.mode === "dis" ? " active dis" : "");
+      stanceNorm.className = "stance" + (state.mode === "normal" ? " active" : "");
+      stanceAdv.className = "stance" + (state.mode === "adv" ? " active adv" : "");
+
+      var picks = diceRow.querySelectorAll(".die-pick");
+      for (var i = 0; i < picks.length; i++) {
+        var d = parseInt(picks[i].getAttribute("data-die"), 10);
+        picks[i].className = "die-pick" + (state.dieType === d ? " active" : "");
+      }
+
+      notationEl.textContent = notation();
+      rollSub.textContent = notation();
+    }
+
+    /* ---------- log ---------- */
+    function breakdown(r) {
+      var dice = "[" + r.kept.join(", ") + "]";
+      if (r.modifier === 0 && r.kept.length === 1) return "A clean " + r.total + ".";
+      var m = r.modifier > 0 ? " + " + r.modifier : r.modifier < 0 ? " − " + Math.abs(r.modifier) : "";
+      return dice + m + "  =  " + r.total;
+    }
+    function renderLog() {
+      logClear.style.display = state.log.length ? "inline" : "none";
+      if (!state.log.length) {
+        logBody.innerHTML = '<p class="log-empty">No rolls yet. The journal waits for August\'s first call.</p>';
+        return;
+      }
+      var html = '<ul class="log-list">';
+      for (var i = 0; i < state.log.length; i++) {
+        var e = state.log[i];
+        var keep = e.mode !== "normal" ? '<em> keep ' + e.kept[0] + '</em>' : '';
+        html += '<li class="log-item ' + (e.crit || "") + '">' +
+          '<span class="log-not">' + e.notation + '</span>' +
+          '<span class="log-detail">[' + e.rolls.join(", ") + ']' + keep + '</span>' +
+          '<span class="log-total">' + e.total + '</span>' +
+          '</li>';
+      }
+      html += "</ul>";
+      logBody.innerHTML = html;
+    }
+
+    /* ---------- roll ---------- */
+    function clearTimers() { for (var i = 0; i < timers.length; i++) clearTimeout(timers[i]); timers = []; }
+
+    function roll() {
+      if (state.rolling) return;
+      clearTimers();
+      state.rolling = true;
+
+      stage.classList.remove("crit-beast", "crit-shatter", "is-idle");
+      stage.classList.add("is-rolling");
+      var oldClaws = stage.querySelector(".claws"); if (oldClaws) oldClaws.remove();
+      flourishEl.textContent = "";
+      verdictEl.className = "verdict verdict-calm";
+      verdictEl.textContent = "Manifesting…";
+      rollLabel.textContent = "Manifesting";
+      rollBtn.disabled = true;
+      buildStack(true);
+
+      // resolve outcome
+      var rolls, kept;
+      if (state.mode !== "normal") {
+        rolls = [randInt(1, 20), randInt(1, 20)];
+        var kv = state.mode === "adv" ? Math.max(rolls[0], rolls[1]) : Math.min(rolls[0], rolls[1]);
+        kept = [kv];
+      } else {
+        rolls = [];
+        for (var i = 0; i < state.qty; i++) rolls.push(randInt(1, state.dieType));
+        kept = rolls;
+      }
+      var sum = 0; for (var j = 0; j < kept.length; j++) sum += kept[j];
+      var total = sum + state.modifier;
+
+      var critType = null;
+      if (state.dieType === 20 && kept.length === 1) {
+        if (kept[0] === 20) critType = "beast";
+        else if (kept[0] === 1) critType = "shatter";
+      }
+
+      var lo = kept.length + state.modifier;
+      var hi = kept.length * state.dieType + state.modifier;
+
+      var steps = reduceMotion ? 4 : 20;
+      var delay = reduceMotion ? 60 : 42;
+      var acc = 0;
+      for (var s = 0; s < steps; s++) {
+        acc += delay;
+        (function () {
+          timers.push(setTimeout(function () {
+            setDisplay(randInt(Math.max(lo, -99), hi));
+            SFX.tick();
+          }, acc));
+        })();
+        delay *= reduceMotion ? 1.1 : 1.14;
+      }
+
+      var notn = notation(), mode = state.mode;
+      timers.push(setTimeout(function () {
+        setDisplay(total);
+        state.rolling = false;
+        rollBtn.disabled = false;
+        rollLabel.textContent = "Roll";
+
+        stage.classList.remove("is-rolling");
+        stage.classList.add("is-idle");
+        buildStack(false);
+
+        if (critType === "beast") {
+          stage.classList.add("crit-beast");
+          stage.insertAdjacentHTML("beforeend", '<div class="claws"><span></span><span></span><span></span></div>');
+          verdictEl.className = "verdict verdict-beast";
+          verdictEl.textContent = "The Beast Answers";
+          flourishEl.textContent = pick(BEAST_LINES);
+          SFX.beast();
+        } else if (critType === "shatter") {
+          stage.classList.add("crit-shatter");
+          dieStack.insertAdjacentHTML("beforeend", '<div class="crack"></div>');
+          verdictEl.className = "verdict verdict-shatter";
+          verdictEl.textContent = "The Echo Shatters";
+          flourishEl.textContent = pick(SHATTER_LINES);
+          SFX.shatter();
+        } else {
+          verdictEl.className = "verdict verdict-calm";
+          verdictEl.textContent = kept.length > 1 ? "The dice settle" : "The echo settles";
+          flourishEl.textContent = breakdown({ kept: kept, modifier: state.modifier, total: total });
+          SFX.impact(); SFX.shimmer();
+        }
+        notationEl.textContent = notn;
+
+        state.log.unshift({ rolls: rolls, kept: kept, modifier: state.modifier, total: total, mode: mode, notation: notn, crit: critType });
+        if (state.log.length > 12) state.log.length = 12;
+        renderLog();
+      }, acc + (reduceMotion ? 80 : 140)));
+    }
+
+    /* ---------- wiring ---------- */
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    DICE.forEach(function (d) {
+      var b = document.createElement("button");
+      b.className = "die-pick" + (d === state.dieType ? " active" : "");
+      b.setAttribute("data-die", d);
+      b.setAttribute("aria-pressed", d === state.dieType ? "true" : "false");
+      b.textContent = "d" + d;
+      b.addEventListener("click", function () {
+        state.dieType = d;
+        state.display = d === 100 ? 100 : d;
+        if (!advAllowed() && state.mode !== "normal") state.mode = "normal";
+        buildStack(false);
+        refreshControls();
+      });
+      diceRow.appendChild(b);
+    });
+
+    $("qtyDown").addEventListener("click", function () { state.qty = clamp(state.qty - 1, 1, 12); if (!advAllowed()) state.mode = "normal"; refreshControls(); });
+    $("qtyUp").addEventListener("click", function () { state.qty = clamp(state.qty + 1, 1, 12); if (!advAllowed()) state.mode = "normal"; refreshControls(); });
+    $("modDown").addEventListener("click", function () { state.modifier = clamp(state.modifier - 1, -20, 20); refreshControls(); });
+    $("modUp").addEventListener("click", function () { state.modifier = clamp(state.modifier + 1, -20, 20); refreshControls(); });
+
+    stanceDis.addEventListener("click", function () { if (!advAllowed()) return; state.mode = state.mode === "dis" ? "normal" : "dis"; refreshControls(); });
+    stanceNorm.addEventListener("click", function () { if (!advAllowed()) return; state.mode = "normal"; refreshControls(); });
+    stanceAdv.addEventListener("click", function () { if (!advAllowed()) return; state.mode = state.mode === "adv" ? "normal" : "adv"; refreshControls(); });
+
+    rollBtn.addEventListener("click", roll);
+    muteBtn.addEventListener("click", function () {
+      state.muted = !state.muted;
+      muteBtn.textContent = state.muted ? "♪ muted" : "♪ sound on";
+      muteBtn.setAttribute("aria-pressed", state.muted ? "true" : "false");
+    });
+    logClear.addEventListener("click", function () { state.log = []; renderLog(); });
+
+    /* ---------- init ---------- */
+    buildStack(false);
+    refreshControls();
+    renderLog();
+  })();
+  </script>
+</body>
+</html>
